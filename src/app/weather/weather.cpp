@@ -233,7 +233,6 @@ void weather_init(void)
     run_data->coactusUpdateFlag = 0x01;
     run_data->update_type = 0x00; // 表示什么也不需要更新
     Serial.print("weather init ok!");
-
 }
 
 

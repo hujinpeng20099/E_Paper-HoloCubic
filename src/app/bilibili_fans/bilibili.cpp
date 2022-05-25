@@ -60,6 +60,7 @@ void bilibili_init(void)
     run_data->fans_num = 0;
     run_data->follow_num = 0;
     run_data->refresh_status = 0;
+    Serial.print("bilibili init ok!");
 }
 
 void update_fans_num(void)
@@ -74,8 +75,8 @@ void update_fans_num(void)
         if (result.httpCode == HTTP_CODE_OK || result.httpCode == HTTP_CODE_MOVED_PERMANENTLY)
         {
             String payload = result.httpResponse;
-            // Serial.println("[HTTP] OK");
-            // Serial.println(payload);
+            Serial.println("[HTTP] OK");
+            Serial.println(payload);
             int startIndex_1 = payload.indexOf("follower") + 10;
             int endIndex_1 = payload.indexOf('}', startIndex_1);
             int startIndex_2 = payload.indexOf("following") + 11;
