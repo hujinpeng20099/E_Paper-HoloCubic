@@ -6,14 +6,14 @@
 #include <esp32-hal-timer.h>
 #include <map>
 
-#define WEATHER_APP_NAME "Weather"
-#define WEATHER_NOW_API "https://www.yiketianqi.com/free/day?appid=%s&appsecret=%s&unescape=1"
-#define WEATHER_DALIY_API "https://www.yiketianqi.com/free/week?unescape=1&appid=%s&appsecret=%s"
-#define TIME_API "http://api.m.taobao.com/rest/api3.do?api=mtop.common.gettimestamp"
-#define WEATHER_PAGE_SIZE 2
-#define UPDATE_WEATHER 0x01       // 更新天气
-#define UPDATE_DALIY_WEATHER 0x02 // 更新每天天气
-#define UPDATE_TIME 0x04          // 更新时间
+#define WEATHER_APP_NAME        "Weather"
+#define WEATHER_NOW_API         "https://www.yiketianqi.com/free/day?appid=%s&appsecret=%s&unescape=1" 
+#define WEATHER_DALIY_API       "https://www.yiketianqi.com/free/week?unescape=1&appid=%s&appsecret=%s" 
+#define TIME_API                "http://api.m.taobao.com/rest/api3.do?api=mtop.common.gettimestamp" 
+#define WEATHER_PAGE_SIZE       2
+#define UPDATE_WEATHER          0x01       // 更新天气
+#define UPDATE_DALIY_WEATHER    0x02 // 更新每天天气
+#define UPDATE_TIME             0x04          // 更新时间
 
 
 struct WT_Config
@@ -78,7 +78,7 @@ void get_weather(void)
     HTTPClient http;
     http.setTimeout(1000);
     char api[128] = {0};
-    snprintf(api, 128, WEATHER_NOW_API, "74432881", "AmYzA12F");
+    snprintf(api, 128, WEATHER_NOW_API, "appid", "appsecret");
 
     Serial.print("API = ");
     Serial.println(api);
@@ -232,7 +232,7 @@ void weather_init(void)
     // 强制更新
     run_data->coactusUpdateFlag = 0x01;
     run_data->update_type = 0x00; // 表示什么也不需要更新
-    Serial.print("weather init ok!");
+    Serial.println("weather init ok!");
 }
 
 

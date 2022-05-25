@@ -3,7 +3,7 @@
 
 
 
-void shares_init(void);
+void stock_init(void);
 
 
 #endif

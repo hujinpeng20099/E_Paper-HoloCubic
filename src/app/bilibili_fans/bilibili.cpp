@@ -1,8 +1,8 @@
 #include "bilibili.h"
 #include "network.h"
 
-#define FANS_API "https://api.bilibili.com/x/relation/stat?vmid="
-#define OTHER_API "https://api.bilibili.com/x/space/upstat?mid="
+#define FANS_API    "https://api.bilibili.com/x/relation/stat?vmid="
+#define OTHER_API   "https://api.bilibili.com/x/space/upstat?mid="
 
 
 struct B_Config
@@ -60,7 +60,7 @@ void bilibili_init(void)
     run_data->fans_num = 0;
     run_data->follow_num = 0;
     run_data->refresh_status = 0;
-    Serial.print("bilibili init ok!");
+    Serial.println("bilibili init ok!");
 }
 
 void update_fans_num(void)
