@@ -78,7 +78,7 @@ void DataRefresh_task(void * pvParameters)
   //init bilibili data and gui
   bilibili_init();
   //init stock data and gui
-  // stock_init();
+  stock_init();
    while(1)
   {
     //refresh weather and stock data 1hour
@@ -90,6 +90,9 @@ void DataRefresh_task(void * pvParameters)
     //refresh timer data 1min
     if(tt>60)
     {
+      update_stock();
+      update_fans_num();
+      get_weather();
       EPD.EPD_Dis_Full((uint8_t *)EPD.EPDbuffer, 1); //将缓存中的图像传给屏幕控制芯片全刷屏幕
       tt=0;
     }
@@ -112,7 +115,7 @@ void setup() {
 //init serial
   Serial.begin(115200);
 //start connect network
-  if(mynetwork.start_conn_wifi("SSID","KEY"))Serial.println("connet wifi success!");
+  if(mynetwork.start_conn_wifi("ROC","HU515320"))Serial.println("connet wifi success!");
 //creat task 
   xReturn = xTaskCreate(lvgl_task,
       "lvgl_task",
@@ -121,17 +124,17 @@ void setup() {
       tskIDLE_PRIORITY+1,
       NULL);
   xReturn = xTaskCreate(DataRefresh_task,
-    "DataRefresh_task",
-    1000,
-    NULL,
-    tskIDLE_PRIORITY+2,
-    NULL);    
+      "DataRefresh_task",
+      10000,
+      NULL,
+      tskIDLE_PRIORITY+2,
+      NULL);    
   if(xReturn==pdPASS)
   {
     Serial.println("task creat success!");
   }
 }
-
+HTTPClient http_st;
 void loop() {
-  vTaskDelay(1000);
+  vTaskDelay(30000);
 }

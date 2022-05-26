@@ -78,7 +78,7 @@ void get_weather(void)
     HTTPClient http;
     http.setTimeout(1000);
     char api[128] = {0};
-    snprintf(api, 128, WEATHER_NOW_API, "appid", "appsecret");
+    snprintf(api, 128, WEATHER_NOW_API, "74432881", "AmYzA12F");
 
     Serial.print("API = ");
     Serial.println(api);

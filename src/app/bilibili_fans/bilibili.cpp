@@ -75,16 +75,15 @@ void update_fans_num(void)
         if (result.httpCode == HTTP_CODE_OK || result.httpCode == HTTP_CODE_MOVED_PERMANENTLY)
         {
             String payload = result.httpResponse;
-            Serial.println("[HTTP] OK");
             Serial.println(payload);
             int startIndex_1 = payload.indexOf("follower") + 10;
             int endIndex_1 = payload.indexOf('}', startIndex_1);
             int startIndex_2 = payload.indexOf("following") + 11;
             int endIndex_2 = payload.indexOf(',', startIndex_2);
-            String res = payload.substring(startIndex_1, endIndex_1);
+            // String res = payload.substring(startIndex_1, endIndex_1);
             run_data->fans_num = payload.substring(startIndex_1, endIndex_1).toInt();
             run_data->follow_num = payload.substring(startIndex_2, endIndex_2).toInt();
-            run_data->refresh_status = 1;
+            // run_data->refresh_status = 1;
             Serial.printf("fans_num=%d",run_data->fans_num);
         }
     }
