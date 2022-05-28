@@ -102,13 +102,10 @@ void DataRefresh_task(void * pvParameters)
 
     }
     //refresh timer data 1min
-    if(tt>5)
+    if(tt>15)
     {
-      // update_stock();
-      // get_weather();
-      vTaskDelay(2000); 
-      display_bilibili(i);
-      vTaskDelay(2000);
+      update_fans_num();
+      vTaskDelay(1000);
       EPD.EPD_Dis_Full((uint8_t *)EPD.EPDbuffer, 1); //将缓存中的图像传给屏幕控制芯片全刷屏幕
       EPD.clearbuffer();   
       tt=0;
@@ -137,13 +134,13 @@ void setup() {
 //creat task 
   xReturn = xTaskCreate(lvgl_task,
       "lvgl_task",
-      50000,
+      30000,
       NULL,
       tskIDLE_PRIORITY+2,
       NULL);
   xReturn = xTaskCreate(DataRefresh_task,
       "DataRefresh_task",
-      10000,
+      30000,
       NULL,
       tskIDLE_PRIORITY+1,
       NULL);    
