@@ -1,5 +1,6 @@
 #include "bilibili.h"
 #include "network.h"
+#include "bilibili_gui.h"
 
 #define FANS_API    "https://api.bilibili.com/x/relation/stat?vmid="
 #define OTHER_API   "https://api.bilibili.com/x/space/upstat?mid="
@@ -52,7 +53,7 @@ static MyHttpResult http_request(String uid)
 
 void bilibili_init(void)
 {
-    // bilibili_gui_init();
+    bilibili_gui_init();
     // 初始化运行时参数
     cfg_data.bili_uid="487263224";
     cfg_data.updataInterval=86400;//一天更新一次
@@ -84,6 +85,8 @@ void update_fans_num(void)
             run_data->fans_num = payload.substring(startIndex_1, endIndex_1).toInt();
             run_data->follow_num = payload.substring(startIndex_2, endIndex_2).toInt();
             // run_data->refresh_status = 1;
+            //refresh data 
+            display_bilibili(run_data->fans_num);
             Serial.printf("fans_num=%d",run_data->fans_num);
         }
     }

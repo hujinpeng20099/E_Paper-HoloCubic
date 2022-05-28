@@ -1499,9 +1499,9 @@ void EPaperDrive::EPD_SetRamPointer(uint16_t addrX, uint8_t addrY, uint8_t addrY
 
 void EPaperDrive::EPD_Init(void)
 {
-    EPD_RST_0;
-    driver_delay_xms(10);
-    EPD_RST_1;
+    // EPD_RST_0;
+    // vTaskDelay(10);
+    // EPD_RST_1;
     // driver_delay_xms(100);
     if (EPD_Type == WX29)
     {
