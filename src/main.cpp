@@ -5,7 +5,7 @@
 #include "app/stock/stock.h"
 #include "app/bilibili_fans/bilibili.h"
 #include "app/weather/weather.h"
-
+#include "app/weather/weather_gui.h"
 #include "app/bilibili_fans/bilibili_gui.h"
 
 #define CS  32
@@ -25,7 +25,6 @@ Network mynetwork;
 static lv_disp_draw_buf_t disp_buf;
 static lv_color_t buf[LV_HOR_RES_MAX*10];
 
-
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
     lv_coord_t x=0, y=0;
@@ -42,7 +41,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
     } 
     lv_disp_flush_ready(disp);
 }
-uint16_t i=0;
+
 void lvgl_task(void * pvParameters)
 {
   
@@ -70,21 +69,15 @@ void lvgl_task(void * pvParameters)
   
   Serial.println("lv init success!");
   lv_disp_drv_register(&disp_drv); 
-  // label = lv_label_create(lv_scr_act(),NULL);
-  // lv_style_set_text_font(&label_style,LV_STATE_DEFAULT, &lv_font_montserrat_48); 
-  // lv_obj_add_style(label,LV_LABEL_PART_MAIN,&label_style);  
-  // lv_label_set_text(label, "1234567890");
-
   //init bilibili data and gui
   bilibili_init();
   //init weather data and gui
-  // weather_init();
+  weather_init();
   //init stock data and gui
-  // stock_init();
+  stock_init();
 
   while(1)
   {
-    // lv_tick_inc(5);
     lv_task_handler();
     vTaskDelay(5);  
   }
@@ -92,11 +85,13 @@ void lvgl_task(void * pvParameters)
 
 void DataRefresh_task(void * pvParameters) 
 {
-  uint16_t wt=0,tt=0,bt=0;
+  uint16_t wt=0,tt=0,bt=2888;
+  //wait wifi connet done!
+  vTaskDelay(6000);
   while(1)
   {
     //refresh weather and stock data 1hour
-    if(wt>3600)
+    if(wt>120)
     {
       wt=0;
 
@@ -104,22 +99,24 @@ void DataRefresh_task(void * pvParameters)
     //refresh timer data 1min
     if(tt>15)
     {
-      update_fans_num();
-      vTaskDelay(1000);
-      EPD.EPD_Dis_Full((uint8_t *)EPD.EPDbuffer, 1); //将缓存中的图像传给屏幕控制芯片全刷屏幕
-      EPD.clearbuffer();   
+ 
       tt=0;
     }
     //refresh bilibili data 12hour
-    if(bt>12)
+    if(bt>2880)
     {
+      update_fans_num();
       bt=0;
     }    
+    vTaskDelay(25000);
+    Serial.printf("fansnum=%d\n",bilibili_run_data->fans_num);
+    display_bilibili();
     vTaskDelay(1000);
+    EPD.EPD_Dis_Full((uint8_t *)EPD.EPDbuffer, 1); //将缓存中的图像传给屏幕控制芯片全刷屏幕
+    EPD.clearbuffer();  
     wt++;
     tt++;
     bt++;
-    i++;
   } 
 }
 
@@ -150,11 +147,8 @@ void setup() {
   }
 
 }
-// HTTPClient http_st;
 
-void loop() {
-    
+void loop() {  
   lv_tick_inc(5); 
   vTaskDelay(5);
-
 }

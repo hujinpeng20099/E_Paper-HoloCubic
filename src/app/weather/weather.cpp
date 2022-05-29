@@ -1,10 +1,9 @@
 #include "weather.h"
-#include "weather_gui.h"
-#include "ESP32Time.h"
 #include "network.h"
 #include "ArduinoJson.h"
 #include <esp32-hal-timer.h>
 #include <map>
+#include "ESP32Time.h"
 
 #define WEATHER_APP_NAME        "Weather"
 #define WEATHER_NOW_API         "https://www.yiketianqi.com/free/day?appid=%s&appsecret=%s&unescape=1" 
@@ -43,8 +42,10 @@ struct WeatherAppRunData
     Weather wea;     // 保存天气状况
 };
 
+// extern struct WeatherAppRunData *weather_run_data;
+
 static WT_Config cfg_data;
-static WeatherAppRunData *run_data = NULL;
+WeatherAppRunData *weather_run_data = NULL;
 
 enum wea_event_Id
 {
@@ -95,24 +96,24 @@ void get_weather(void)
             DynamicJsonDocument doc(1024);
             deserializeJson(doc, payload);
             JsonObject sk = doc.as<JsonObject>();
-            strcpy(run_data->wea.cityname, sk["city"].as<String>().c_str());
-            run_data->wea.weather_code = weatherMap[sk["wea_img"].as<String>()];
-            run_data->wea.temperature = sk["tem"].as<int>();
+            strcpy(weather_run_data->wea.cityname, sk["city"].as<String>().c_str());
+            weather_run_data->wea.weather_code = weatherMap[sk["wea_img"].as<String>()];
+            weather_run_data->wea.temperature = sk["tem"].as<int>();
 
             // 获取湿度
-            run_data->wea.humidity = 50;
+            weather_run_data->wea.humidity = 50;
             char humidity[8] = {0};
             strncpy(humidity, sk["humidity"].as<String>().c_str(), 8);
             humidity[strlen(humidity) - 1] = 0; // 去除尾部的 % 号
-            run_data->wea.humidity = atoi(humidity);
+            weather_run_data->wea.humidity = atoi(humidity);
 
-            run_data->wea.maxTemp = sk["tem1"].as<int>();
-            run_data->wea.minTemp = sk["tem2"].as<int>();
-            strcpy(run_data->wea.windDir, sk["win"].as<String>().c_str());
-            run_data->wea.windLevel = windLevelAnalyse(sk["win_speed"].as<String>());
-            run_data->wea.airQulity = airQulityLevel(sk["air"].as<int>());
-            Serial.printf("weathercode=%d",run_data->wea.weather_code);
-            // Serial.printf("temp=%d,humid=%d,win=%d,air=%d",run_data->wea.temperature,run_data->wea.humidity,run_data->wea.windLevel,run_data->wea.airQulity);
+            weather_run_data->wea.maxTemp = sk["tem1"].as<int>();
+            weather_run_data->wea.minTemp = sk["tem2"].as<int>();
+            strcpy(weather_run_data->wea.windDir, sk["win"].as<String>().c_str());
+            weather_run_data->wea.windLevel = windLevelAnalyse(sk["win_speed"].as<String>());
+            weather_run_data->wea.airQulity = airQulityLevel(sk["air"].as<int>());
+            Serial.printf("weathercode=%d",weather_run_data->wea.weather_code);
+            // Serial.printf("temp=%d,humid=%d,win=%d,air=%d",weather_run_data->wea.temperature,weather_run_data->wea.humidity,weather_run_data->wea.windLevel,weather_run_data->wea.airQulity);
         }
     }
     else
@@ -125,9 +126,9 @@ void get_weather(void)
 static long long get_timestamp()
 {
     // 使用本地的机器时钟
-    run_data->preNetTimestamp = run_data->preNetTimestamp + (millis() - run_data->preLocalTimestamp);
-    run_data->preLocalTimestamp = millis();
-    return run_data->preNetTimestamp;
+    weather_run_data->preNetTimestamp = weather_run_data->preNetTimestamp + (millis() - weather_run_data->preLocalTimestamp);
+    weather_run_data->preLocalTimestamp = millis();
+    return weather_run_data->preNetTimestamp;
 }
 
 static long long get_timestamp(String url)
@@ -150,20 +151,20 @@ static long long get_timestamp(String url)
             int time_index = (payload.indexOf("data")) + 12;
             time = payload.substring(time_index, payload.length() - 3);
             // 以网络时间戳为准
-            run_data->preNetTimestamp = atoll(time.c_str()) + run_data->errorNetTimestamp + TIMEZERO_OFFSIZE;
-            run_data->preLocalTimestamp = millis();
+            weather_run_data->preNetTimestamp = atoll(time.c_str()) + weather_run_data->errorNetTimestamp + TIMEZERO_OFFSIZE;
+            weather_run_data->preLocalTimestamp = millis();
         }
     }
     else
     {
         Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
         // 得不到网络时间戳时
-        run_data->preNetTimestamp = run_data->preNetTimestamp + (millis() - run_data->preLocalTimestamp);
-        run_data->preLocalTimestamp = millis();
+        weather_run_data->preNetTimestamp = weather_run_data->preNetTimestamp + (millis() - weather_run_data->preLocalTimestamp);
+        weather_run_data->preLocalTimestamp = millis();
     }
     http.end();
 
-    return run_data->preNetTimestamp;
+    return weather_run_data->preNetTimestamp;
 }
 
 static void get_daliyWeather(short maxT[], short minT[])
@@ -207,13 +208,13 @@ static void get_daliyWeather(short maxT[], short minT[])
 static void UpdateTime_RTC(long long timestamp)
 {
     struct TimeStr t;
-    run_data->g_rtc.setTime(timestamp / 1000);
-    t.month = run_data->g_rtc.getMonth() + 1;
-    t.day = run_data->g_rtc.getDay();
-    t.hour = run_data->g_rtc.getHour(true);
-    t.minute = run_data->g_rtc.getMinute();
-    t.second = run_data->g_rtc.getSecond();
-    t.weekday = run_data->g_rtc.getDayofWeek();
+    weather_run_data->g_rtc.setTime(timestamp / 1000);
+    t.month = weather_run_data->g_rtc.getMonth() + 1;
+    t.day = weather_run_data->g_rtc.getDay();
+    t.hour = weather_run_data->g_rtc.getHour(true);
+    t.minute = weather_run_data->g_rtc.getMinute();
+    t.second = weather_run_data->g_rtc.getSecond();
+    t.weekday = weather_run_data->g_rtc.getDayofWeek();
     // Serial.printf("time : %d-%d-%d\n",t.hour, t.minute, t.second);
     display_time(t, LV_SCR_LOAD_ANIM_NONE);
 }
@@ -221,17 +222,17 @@ static void UpdateTime_RTC(long long timestamp)
 void weather_init(void)
 {
     // 初始化运行时参数
-    run_data = (WeatherAppRunData *)calloc(1, sizeof(WeatherAppRunData));
-    memset((char *)&run_data->wea, 0, sizeof(Weather));
-    run_data->preNetTimestamp = 1577808000000; // 上一次的网络时间戳 初始化为2020-01-01 00:00:00
-    run_data->errorNetTimestamp = 2;
-    run_data->preLocalTimestamp = millis(); // 上一次的本地机器时间戳
-    run_data->clock_page = 0;
-    run_data->preWeatherMillis = 0;
-    run_data->preTimeMillis = 0;
+    weather_run_data = (WeatherAppRunData *)calloc(1, sizeof(WeatherAppRunData));
+    memset((char *)&weather_run_data->wea, 0, sizeof(Weather));
+    weather_run_data->preNetTimestamp = 1577808000000; // 上一次的网络时间戳 初始化为2020-01-01 00:00:00
+    weather_run_data->errorNetTimestamp = 2;
+    weather_run_data->preLocalTimestamp = millis(); // 上一次的本地机器时间戳
+    weather_run_data->clock_page = 0;
+    weather_run_data->preWeatherMillis = 0;
+    weather_run_data->preTimeMillis = 0;
     // 强制更新
-    run_data->coactusUpdateFlag = 0x01;
-    run_data->update_type = 0x00; // 表示什么也不需要更新
+    weather_run_data->coactusUpdateFlag = 0x01;
+    weather_run_data->update_type = 0x00; // 表示什么也不需要更新
     Serial.println("weather init ok!");
 }
 
@@ -250,22 +251,22 @@ void weather_init(void)
 //         case UPDATE_NOW:
 //         {
 //             Serial.print(F("weather update.\n"));
-//             run_data->update_type |= UPDATE_WEATHER;
+//             weather_run_data->update_type |= UPDATE_WEATHER;
 
 //             get_weather();
-//             if (run_data->clock_page == 0)
+//             if (weather_run_data->clock_page == 0)
 //             {
-//                 display_weather(run_data->wea, LV_SCR_LOAD_ANIM_NONE);
+//                 display_weather(weather_run_data->wea, LV_SCR_LOAD_ANIM_NONE);
 //             }
 //         };
 //         break;
 //         case UPDATE_NTP:
 //         {
 //             Serial.print(F("ntp update.\n"));
-//             run_data->update_type |= UPDATE_TIME;
+//             weather_run_data->update_type |= UPDATE_TIME;
 
 //             long long timestamp = get_timestamp(TIME_API); // nowapi时间API
-//             if (run_data->clock_page == 0)
+//             if (weather_run_data->clock_page == 0)
 //             {
 //                 UpdateTime_RTC(timestamp);
 //             }
@@ -274,12 +275,12 @@ void weather_init(void)
 //         case UPDATE_DAILY:
 //         {
 //             Serial.print(F("daliy update.\n"));
-//             run_data->update_type |= UPDATE_DALIY_WEATHER;
+//             weather_run_data->update_type |= UPDATE_DALIY_WEATHER;
 
-//             get_daliyWeather(run_data->wea.daily_max, run_data->wea.daily_min);
-//             if (run_data->clock_page == 1)
+//             get_daliyWeather(weather_run_data->wea.daily_max, weather_run_data->wea.daily_min);
+//             if (weather_run_data->clock_page == 1)
 //             {
-//                 display_curve(run_data->wea.daily_max, run_data->wea.daily_min, LV_SCR_LOAD_ANIM_NONE);
+//                 display_curve(weather_run_data->wea.daily_max, weather_run_data->wea.daily_min, LV_SCR_LOAD_ANIM_NONE);
 //             }
 //         };
 //         break;

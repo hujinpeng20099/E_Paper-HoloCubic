@@ -1,6 +1,7 @@
 #ifndef APP_WEATHER_GUI_H
 #define APP_WEATHER_GUI_H
 
+
 struct Weather
 {
     int weather_code; // 天气现象代码
@@ -48,6 +49,10 @@ extern "C"
     void weather_gui_del(void);
     void display_space(void);
     int airQulityLevel(int q);
+
+    void dispaly_timer(void);
+    void display_day_weather(void);
+    void display_week_weather(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

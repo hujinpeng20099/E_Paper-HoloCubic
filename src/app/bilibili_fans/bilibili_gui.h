@@ -12,7 +12,7 @@ extern "C"
         lv_task_handler(); //绛夊緟鍔ㄧ敾瀹屾垚
 
     void bilibili_gui_init(void);
-    void display_bilibili(unsigned int fans_num);
+    void display_bilibili(void);
 
 
 #ifdef __cplusplus

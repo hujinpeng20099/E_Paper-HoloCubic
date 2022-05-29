@@ -1,75 +1,52 @@
-// #include "weather_gui.h"
-// #include "weather_image.h"
+#include "weather_gui.h"
+#include "weather.h"
+#include "weather_image.h"
 
-// #include "lvgl.h"
-// #include <esp32-hal.h>
+#include "lvgl.h"
+#include <esp32-hal.h>
 
-// LV_FONT_DECLARE(lv_font_ibmplex_115);
-// LV_FONT_DECLARE(lv_font_ibmplex_64);
+LV_FONT_DECLARE(font_108);
+
 // LV_FONT_DECLARE(ch_font20);
-// static lv_style_t default_style;
-// static lv_style_t chFont_style;
-// static lv_style_t numberSmall_style;
-// static lv_style_t numberBig_style;
-// static lv_style_t btn_style;
-// static lv_style_t bar_style;
 
-// static lv_obj_t *scr_1 = NULL;
-// static lv_obj_t *scr_2 = NULL;
-// static lv_obj_t *chart, *titleLabel;
+static lv_style_t   timer_style;
+static lv_style_t   weather_style;
 
-// static lv_obj_t *weatherImg = NULL;
-// static lv_obj_t *cityLabel = NULL;
-// static lv_obj_t *btn = NULL, *btnLabel = NULL;
-// static lv_obj_t *txtLabel = NULL;
-// static lv_obj_t *clockLabel_1 = NULL, *clockLabel_2 = NULL;
-// static lv_obj_t *dateLabel = NULL;
-// static lv_obj_t *tempImg = NULL, *tempBar = NULL, *tempLabel = NULL;
-// static lv_obj_t *humiImg = NULL, *humiBar = NULL, *humiLabel = NULL;
-// static lv_obj_t *spaceImg = NULL;
+
+static lv_obj_t *weatherImg = NULL,*weatherlabel;
+static lv_obj_t *cityLabel = NULL;
+static lv_obj_t *clockLabel_1 = NULL, *clockLabel_2 = NULL;
+static lv_obj_t *tempImg = NULL, *tempBar = NULL, *tempLabel = NULL;
+static lv_obj_t *humiImg = NULL, *humiBar = NULL, *humiLabel = NULL;
 
 // static lv_chart_series_t *ser1, *ser2;
 
-// // 天气图标路径的映射关系
+// 天气图标路径的映射关系
 // const void *weaImage_map[] = {&weather_0, &weather_9, &weather_14, &weather_5, &weather_25,
 //                               &weather_30, &weather_26, &weather_11, &weather_23};
-// // 太空人图标路径的映射关系
-// const void *manImage_map[] = {&man_0, &man_1, &man_2, &man_3, &man_4, &man_5, &man_6, &man_7, &man_8, &man_9};
+
 // static const char weekDayCh[7][4] = {"日", "一", "二", "三", "四", "五", "六"};
 // static const char airQualityCh[6][10] = {"优", "良", "轻度", "中度", "重度", "严重"};
 
-// void weather_gui_init(void)
-// {
-//     lv_style_init(&default_style);
-//     lv_style_set_bg_color(&default_style, LV_STATE_DEFAULT, LV_COLOR_BLACK);
-//     lv_style_set_bg_color(&default_style, LV_STATE_PRESSED, LV_COLOR_GRAY);
-//     lv_style_set_bg_color(&default_style, LV_STATE_FOCUSED, LV_COLOR_BLACK);
-//     lv_style_set_bg_color(&default_style, LV_STATE_FOCUSED | LV_STATE_PRESSED, lv_color_hex(0xf88));
+void weather_gui_init(void)
+{
+    lv_style_init(&timer_style);
+    lv_style_set_text_font(&timer_style,&font_108);
 
-//     lv_style_init(&chFont_style);
-//     lv_style_set_text_opa(&chFont_style, LV_STATE_DEFAULT, LV_OPA_COVER);
-//     lv_style_set_text_color(&chFont_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-//     lv_style_set_text_font(&chFont_style, LV_STATE_DEFAULT, &ch_font20);
-//     lv_style_init(&numberSmall_style);
-//     lv_style_set_text_opa(&numberSmall_style, LV_STATE_DEFAULT, LV_OPA_COVER);
-//     lv_style_set_text_color(&numberSmall_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-//     lv_style_set_text_font(&numberSmall_style, LV_STATE_DEFAULT, &lv_font_ibmplex_64);
-//     lv_style_init(&numberBig_style);
-//     lv_style_set_text_opa(&numberBig_style, LV_STATE_DEFAULT, LV_OPA_COVER);
-//     lv_style_set_text_color(&numberBig_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-//     lv_style_set_text_font(&numberBig_style, LV_STATE_DEFAULT, &lv_font_ibmplex_115);
-//     lv_style_init(&btn_style);
-//     lv_style_set_border_width(&btn_style, LV_STATE_DEFAULT, 0);
-//     lv_style_init(&bar_style);
-//     lv_style_set_bg_color(&bar_style, LV_STATE_DEFAULT, LV_COLOR_BLACK);
-//     lv_style_set_border_width(&bar_style, LV_STATE_DEFAULT, 2);
-//     lv_style_set_border_color(&bar_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-//     lv_style_set_pad_top(&bar_style, LV_STATE_DEFAULT, 1); //指示器到背景四周的距离
-//     lv_style_set_pad_bottom(&bar_style, LV_STATE_DEFAULT, 1);
-//     lv_style_set_pad_left(&bar_style, LV_STATE_DEFAULT, 1);
-//     lv_style_set_pad_right(&bar_style, LV_STATE_DEFAULT, 1);
-// }
+    lv_style_init(&weather_style);
+    lv_style_set_text_font(&weather_style,&lv_font_montserrat_40);
 
+    weatherImg = lv_img_create(lv_scr_act());
+    // lv_img_set_src(weatherImg, weaImage_map[0]);
+
+
+}
+void timer_gui_init(void)
+{
+
+
+
+}
 // void display_curve_init(lv_scr_load_anim_t anim_type)
 // {
 //     lv_obj_t *act_obj = lv_scr_act(); // 获取当前活动页
@@ -295,7 +272,21 @@
 //     //     lv_scr_load(scr_1);
 //     // }
 // }
+void dispaly_timer(void)
+{
 
+}
+
+void display_day_weather(void)
+{
+
+}
+void display_week_weather(void)
+{
+
+
+
+}
 // void weather_obj_del(void)
 // {
 //     if (weatherImg != NULL)

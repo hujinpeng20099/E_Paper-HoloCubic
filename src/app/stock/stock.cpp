@@ -6,28 +6,16 @@
 #define STOCK_API    "http://api.tianapi.com/finance/index?key=72f5b2592703a78caf052d420ca68127&code=sh603986&list=0"
 
 
-struct StockAppRunData
-{
-    unsigned int stock_code;
-    unsigned int open_price;
-    unsigned int cur_price;
-    unsigned int end_price;
-    unsigned int turnover;
-    unsigned long trading_volume;
-    unsigned char flag;
-    unsigned char up_date; 
-};
-
-static StockAppRunData *run_data = NULL;
+StockAppRunData *stock_run_data = NULL;
 
 
 void stock_init(void)
 {
     // 初始化运行时参数
-    run_data = (StockAppRunData *)malloc(sizeof(StockAppRunData));
-    run_data->open_price = 0;
-    run_data->cur_price = 0;
-    run_data->end_price = 0;
+    stock_run_data = (StockAppRunData *)malloc(sizeof(StockAppRunData));
+    stock_run_data->open_price = 0;
+    stock_run_data->cur_price = 0;
+    stock_run_data->end_price = 0;
     Serial.println("stock_init ok!");
 }
 
@@ -46,8 +34,8 @@ void update_stock(void)
             DynamicJsonDocument doc(1000);
             deserializeJson(doc, payload);
             JsonObject sk = doc.as<JsonObject>();
-            run_data->open_price = sk["newslist"][1];
-            Serial.printf("open_price=%d",run_data->open_price); 
+            stock_run_data->open_price = sk["newslist"][1];
+            Serial.printf("open_price=%d",stock_run_data->open_price); 
         }
     }
     else
