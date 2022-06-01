@@ -75,7 +75,7 @@ void lvgl_task(void * pvParameters)
   weather_init();
   //init stock data and gui
   stock_init();
-
+  weather_gui_init();
   while(1)
   {
     lv_task_handler();
@@ -85,21 +85,21 @@ void lvgl_task(void * pvParameters)
 
 void DataRefresh_task(void * pvParameters) 
 {
-  uint16_t wt=0,tt=0,bt=2888;
+  uint16_t wt=126,tt=5,bt=2888;
   //wait wifi connet done!
-  vTaskDelay(6000);
+  vTaskDelay(5000);
   while(1)
   {
     //refresh weather and stock data 1hour
     if(wt>120)
-    {
+    {     
+      update_ntp_time();
       wt=0;
-
     }
     //refresh timer data 1min
-    if(tt>15)
+    if(tt>2)
     {
- 
+      
       tt=0;
     }
     //refresh bilibili data 12hour
@@ -107,13 +107,15 @@ void DataRefresh_task(void * pvParameters)
     {
       update_fans_num();
       bt=0;
-    }    
-    vTaskDelay(25000);
-    Serial.printf("fansnum=%d\n",bilibili_run_data->fans_num);
+    }
+    // weather_gui_init();   
+    
+    display_timer();
     display_bilibili();
-    vTaskDelay(1000);
+    vTaskDelay(10000);
     EPD.EPD_Dis_Full((uint8_t *)EPD.EPDbuffer, 1); //将缓存中的图像传给屏幕控制芯片全刷屏幕
     EPD.clearbuffer();  
+    vTaskDelay(20000);
     wt++;
     tt++;
     bt++;
