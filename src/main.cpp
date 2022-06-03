@@ -129,7 +129,7 @@ void setup() {
   BaseType_t xReturn = pdPASS;
 //init serial
   Serial.begin(115200);
-//start connect network
+//start connect network need your change ap ssid and key
   if(mynetwork.start_conn_wifi("ROC","HU515320"))Serial.println("connet wifi success!");
 //creat task 
   xReturn = xTaskCreate(lvgl_task,
