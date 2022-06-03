@@ -5,7 +5,7 @@
 
 
 //key = your api key code = stock number
-#define STOCK_API    "http://api.tianapi.com/finance/index?key=72f5b2592703a78caf052d420ca68127&code=sh603986&list=0"
+#define STOCK_API    "http://api.tianapi.com/finance/index?key=72f5b2592703a78caf052d420ca68127&code=sh000001&list=0"
 
 
 StockAppRunData *stock_run_data = NULL;
@@ -63,7 +63,7 @@ void stock_gui_init(void)
     lv_style_set_text_font(&stock_style,&font_24);
 
     stockImg0 = lv_img_create(lv_scr_act());
-    lv_obj_align(stockImg0, LV_ALIGN_RIGHT_MID, -100,100);
+    lv_obj_align(stockImg0, LV_ALIGN_RIGHT_MID, -50,100);
 
     stockImg1 = lv_img_create(lv_scr_act());
     lv_obj_align(stockImg1, LV_ALIGN_RIGHT_MID, -10,100);    
