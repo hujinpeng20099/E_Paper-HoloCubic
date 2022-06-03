@@ -51,7 +51,7 @@ void get_weather(void)
     http.setTimeout(1000);
     char api[128] = {0};
     // need you change your apikey
-    snprintf(api, 128, WEATHER_NOW_API, "74432881", "AmYzA12F");
+    snprintf(api, 128, WEATHER_NOW_API, "your ID", "your key");
 
     Serial.print("API = ");
     Serial.println(api);

@@ -5,7 +5,7 @@
 
 
 // need you change your apikey key = your api key code = stock number
-#define STOCK_API    "http://api.tianapi.com/finance/index?key=72f5b2592703a78caf052d420ca68127&code=sh000001&list=0"
+#define STOCK_API    "http://api.tianapi.com/finance/index?key=yourAPIKey&code=sh000001&list=0"
 
 
 StockAppRunData *stock_run_data = NULL;
