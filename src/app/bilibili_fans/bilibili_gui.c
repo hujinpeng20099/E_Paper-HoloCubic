@@ -23,10 +23,10 @@ void bilibili_gui_init(void)
     fans_label = lv_label_create(lv_scr_act()); 
     lv_obj_add_style(fans_label, &fans_label_style,0);
     lv_label_set_text(fans_label, " ");
-    lv_obj_align(fans_label,LV_ALIGN_RIGHT_MID,-10,30);
+    lv_obj_align(fans_label,LV_ALIGN_RIGHT_MID,-10,40);
 
     lv_img_set_src(logo_image, &bilibili_ioc);
-    lv_obj_align(logo_image, LV_ALIGN_RIGHT_MID, -10,-20);
+    lv_obj_align(logo_image, LV_ALIGN_RIGHT_MID, -10,-10);
     lv_obj_set_size(logo_image, 108, 48);
 
 }

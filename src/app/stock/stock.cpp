@@ -66,13 +66,13 @@ void stock_gui_init(void)
     lv_obj_align(stockImg0, LV_ALIGN_RIGHT_MID, -50,100);
 
     stockImg1 = lv_img_create(lv_scr_act());
-    lv_obj_align(stockImg1, LV_ALIGN_RIGHT_MID, -10,100);    
+    lv_obj_align(stockImg1, LV_ALIGN_RIGHT_MID, -5,100);    
 
 
     stocklabel = lv_label_create(lv_scr_act());
     lv_obj_add_style(stocklabel, &stock_style,0);
     lv_label_set_text(stocklabel, " ");
-    lv_obj_align(stocklabel, LV_ALIGN_BOTTOM_RIGHT, -10,0);    
+    lv_obj_align(stocklabel, LV_ALIGN_BOTTOM_RIGHT, -15,0);    
 }
 
 
