@@ -14,10 +14,10 @@ https://github.com/HalfSweetStudio/EPaperDrive
 4，添加了股市信息显示
 
 如何使用：
-1，将main.cpp中WiFi的ssid和key修改中需要连接的路由器
-...
+1，将main.cpp中WiFi的ssid和key修改中需要连接的路由器....
+
 2，修改天气api中的密钥信息，需要自己去天气官网申请
-...
+
 3，股市信息的api也需要替换成自己申请的key
-...
-目前还在完善代码阶段...代码还不能使用，只移植了墨水屏驱动!
+
+![成品展示](images/2022/06/成品展示.png)
