@@ -18,5 +18,7 @@ extern StockAppRunData *stock_run_data;
 
 void stock_init(void);
 void update_stock(void);
+void stock_gui_init(void);
+void display_stock(void);
 
 #endif

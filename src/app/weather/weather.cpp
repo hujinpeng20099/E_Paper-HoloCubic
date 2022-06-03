@@ -196,11 +196,14 @@ void weather_init(void)
     memset((char *)&weather_run_data->wea, 0, sizeof(Weather));
 
     weather_run_data->preNetTimestamp = 1609455565; //// default (1609459200) = 1st Jan 2021
-    weather_run_data->errorNetTimestamp = 5;
+    weather_run_data->errorNetTimestamp = 35;
     weather_run_data->preLocalTimestamp = millis(); // 上一次的本地机器时间戳
     weather_run_data->preTimeMillis = 0;
 
     UpdateTime_RTC(weather_run_data->preNetTimestamp);
+
+    weather_gui_init();
+    
     Serial.println("weather init ok!");
 }
 
@@ -218,6 +221,6 @@ void update_time(void)
 void update_weather(void)
 {
     get_weather();
-    get_daliyWeather(weather_run_data);
+    // get_daliyWeather(weather_run_data);
 }
 

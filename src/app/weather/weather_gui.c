@@ -9,6 +9,7 @@
 
 LV_FONT_DECLARE(font_88);
 LV_FONT_DECLARE(font_32);
+LV_FONT_DECLARE(font_24);
 
 static lv_style_t   timer_style;
 static lv_style_t   weather_style;
@@ -17,17 +18,15 @@ static lv_style_t   daylabel_style;
 static lv_obj_t *weatherImg = NULL, *weatherdayImg=NULL, *weatherlabel=NULL;
 static lv_obj_t *cityLabel = NULL;
 static lv_obj_t *clockLabel = NULL, *daylabel = NULL ,*weeklabel = NULL;
-static lv_obj_t *tempImg = NULL, *tempBar = NULL, *tempLabel = NULL;
-static lv_obj_t *humiImg = NULL, *humiBar = NULL, *humiLabel = NULL;
-
+static lv_obj_t *tempImg = NULL, *tempLabel = NULL;
+static lv_obj_t *humiImg = NULL, *humiLabel = NULL;
+static lv_obj_t *airImg = NULL, *airImg2 = NULL;
 // static lv_chart_series_t *ser1, *ser2;
 
 // 天气图标路径的映射关系
-// const void *weaImage_map[] = {&weather_0, &weather_9, &weather_14, &weather_5, &weather_25,
-//                               &weather_30, &weather_26, &weather_11, &weather_23};
-const void *weaImage_map[] = {&rain};
-static const char weekDayCh[7][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-static const char airQualityCh[6][10] = {"优", "良", "轻度", "中度", "重度", "严重"};
+const void *weaImage_map[] = {&qingtian, &duoyun, &dayu, &qingzhuanduoyun, &bingbao,
+                              &wumai, &shachenbao, &leizhenyu, &baoxue};
+
 
 void weather_gui_init(void)
 {
@@ -35,15 +34,40 @@ void weather_gui_init(void)
     lv_style_set_text_font(&timer_style,&font_88);
 
     lv_style_init(&weather_style);
-    lv_style_set_text_font(&weather_style,&lv_font_montserrat_24);
+    lv_style_set_text_font(&weather_style,&font_24);
 
     lv_style_init(&daylabel_style);
     lv_style_set_text_font(&daylabel_style, &font_32);
 
     weatherImg = lv_img_create(lv_scr_act());
-    lv_img_set_src(weatherImg, weaImage_map[0]);
-    lv_obj_align(weatherImg, LV_ALIGN_LEFT_MID, 20,0);
+    // lv_img_set_src(weatherImg, weaImage_map[0]);
+    lv_obj_align(weatherImg, LV_ALIGN_LEFT_MID, 50,15);
 
+    tempImg = lv_img_create(lv_scr_act());
+    lv_img_set_src(tempImg, &temp);
+    lv_obj_align(tempImg, LV_ALIGN_LEFT_MID, 165,-25);
+
+    tempLabel = lv_label_create(lv_scr_act());
+    lv_obj_add_style(tempLabel, &weather_style,0);
+    lv_label_set_text(tempLabel, " ");
+    lv_obj_align(tempLabel, LV_ALIGN_LEFT_MID, 210,-25);    
+
+    humiImg = lv_img_create(lv_scr_act());
+    lv_img_set_src(humiImg, &hum);
+    lv_obj_align(humiImg, LV_ALIGN_LEFT_MID, 165,25);
+
+    humiLabel = lv_label_create(lv_scr_act());
+    lv_obj_add_style(humiLabel, &weather_style,0);
+    lv_label_set_text(humiLabel, " ");
+    lv_obj_align(humiLabel, LV_ALIGN_LEFT_MID, 210,25);    
+
+    airImg = lv_img_create(lv_scr_act());
+    lv_img_set_src(airImg, &air);
+    lv_obj_align(airImg, LV_ALIGN_LEFT_MID, 165,75);
+
+    airImg2 = lv_img_create(lv_scr_act());
+    // lv_img_set_src(airImg2, &weixiao);
+    lv_obj_align(airImg2, LV_ALIGN_LEFT_MID, 210,75);  
 
     clockLabel = lv_label_create(lv_scr_act());
     lv_obj_add_style(clockLabel, &timer_style,0);
@@ -58,7 +82,7 @@ void weather_gui_init(void)
     weeklabel = lv_label_create(lv_scr_act());
     lv_obj_add_style(weeklabel, &daylabel_style,0);
     lv_label_set_text(weeklabel, " ");    
-    lv_obj_align(weeklabel,LV_ALIGN_BOTTOM_LEFT,160,0);    
+    lv_obj_align(weeklabel,LV_ALIGN_BOTTOM_LEFT,180,0);    
 }
 /*
 更新时间显示
@@ -150,31 +174,38 @@ void display_timer(void)
 
 void display_day_weather(void)
 {
-
+    lv_img_set_src(weatherImg, weaImage_map[weather_run_data->wea.weather_code]);
+    lv_img_set_src(tempImg, &temp);
+    lv_img_set_src(humiImg, &hum);
+    lv_img_set_src(airImg, &air);
+    lv_label_set_text_fmt(tempLabel, "%d", weather_run_data->wea.temperature);
+    lv_label_set_text_fmt(humiLabel, "%d", weather_run_data->wea.humidity);
+    switch (weather_run_data->wea.airQulity)
+    {
+        case 0:
+            lv_img_set_src(airImg2, &weixiao);
+            break;
+        case 1:
+            lv_img_set_src(airImg2, &yiban);
+            break;
+        case 2:
+            lv_img_set_src(airImg2, &bukaixin);
+            break;                    
+        default:
+            break;
+    }
 }
 
 
 int airQulityLevel(int q)
 {
-    if (q < 50)
+    if (q < 160)
     {
         return 0;
     }
-    else if (q < 100)
+    else if (q < 320)
     {
         return 1;
     }
-    else if (q < 150)
-    {
-        return 2;
-    }
-    else if (q < 200)
-    {
-        return 3;
-    }
-    else if (q < 300)
-    {
-        return 4;
-    }
-    return 5;
+    return 2;
 }
