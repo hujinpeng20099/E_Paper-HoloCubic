@@ -85,27 +85,29 @@ void lvgl_task(void * pvParameters)
 
 void DataRefresh_task(void * pvParameters) 
 {
-  uint16_t wt=126,st=50,bt=800;
+  uint16_t wt=38,st=68,bt=600;
   //wait wifi connet done!
   vTaskDelay(5000);
   while(1)
   {
-    //refresh weather and timer data 1hour
-    if(wt>120)
-    {  
-      update_weather();   
+    //refresh weather and timer  data 0.5hour
+    if(wt>30)
+    {
+      update_weather();      
       update_ntp_time();
       wt=0;
     }
-    //refresh stock data
-    if(st>30)
+//    data stock
+    if(st>60)
     {
+      
       update_stock();
       st=0;
-    }
+    }    
     //refresh bilibili data 12hour
-    if(bt>720)
+    if(bt>500)
     {
+      esp_restart();
       update_fans_num();
       bt=0;
     }
@@ -120,6 +122,7 @@ void DataRefresh_task(void * pvParameters)
     vTaskDelay(20000);
     wt++;
     bt++;
+    st++;
   } 
 }
 
